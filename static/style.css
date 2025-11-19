@@ -1,0 +1,236 @@
+/* =============================== */
+/*          RESET BÁSICO          */
+/* =============================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #1c1c1c;
+    color: #e6e6e6;
+    padding-bottom: 80px;
+}
+
+a {
+    color: #4da3ff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* =============================== */
+/*            TOP BAR             */
+/* =============================== */
+
+.topbar {
+    background: #111;
+    padding: 15px 0;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #444;
+}
+
+.topbar a {
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+
+/* =============================== */
+/*            CONTAINER           */
+/* =============================== */
+
+.container {
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+}
+
+
+/* =============================== */
+/*               CARD             */
+/* =============================== */
+
+.card {
+    background: #262626;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.dark-card {
+    background: #2e2e2e;
+}
+
+
+/* =============================== */
+/*        FORMULÁRIOS             */
+/* =============================== */
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    background: #1c1c1c;
+    border: 1px solid #555;
+    color: #fff;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+textarea {
+    min-height: 90px;
+}
+
+
+/* =============================== */
+/*             BOTÕES             */
+/* =============================== */
+
+button,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.btn-small {
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-secondary {
+    background: #666;
+    color: #fff;
+}
+
+.btn-danger {
+    background: #d9534f;
+    color: #fff;
+}
+
+.btn-small {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+
+/* =============================== */
+/*             TABELAS            */
+/* =============================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th {
+    background: #333;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 2px solid #444;
+}
+
+table td {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+}
+
+
+/* =============================== */
+/*               BADGES           */
+/* =============================== */
+
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    display: inline-block;
+    color: #fff;
+}
+
+.badge-owner {
+    background: #2980b9;
+}
+
+.badge-office {
+    background: #444;
+}
+
+
+/* =============================== */
+/*              TAG CHIPS         */
+/* =============================== */
+
+.tag-chip {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-right: 5px;
+    font-size: 12px;
+    color: #000;
+    font-weight: bold;
+}
+
+.tag-preview {
+    margin-top: 10px;
+}
+
+
+/* =============================== */
+/*            CHECKBOXES          */
+/* =============================== */
+
+.checkbox-group {
+    margin-top: 10px;
+}
+
+.chkitem {
+    display: block;
+    padding: 6px 0;
+}
+
+
+/* =============================== */
+/*              FLASH             */
+/* =============================== */
+
+.flash {
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+
+.flash-success {
+    background: #2d662d;
+}
+
+.flash-error {
+    background: #7a1f1f;
+}
+
+.flash-warning {
+    background: #8a6d3b;
+}
