@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Criar Novo Usuário</h2>
+
+<div class="card dark-card">
+
+    <form method="POST" action="{{ url_for('admin_users_create') }}">
+
+        <!-- ============================= -->
+        <!-- DADOS PRINCIPAIS DO USUÁRIO   -->
+        <!-- ============================= -->
+
+        <label>Username (login):</label>
+        <input type="text" name="username" required>
+
+        <label>Nome Completo:</label>
+        <input type="text" name="full_name" required>
+
+        <label>Senha Inicial:</label>
+        <input type="password" name="password" required>
+
+        <!-- ============================= -->
+        <!-- FUNÇÃO                        -->
+        <!-- ============================= -->
+
+        <label>Função:</label>
+        <select name="role" required>
+            <option value="ADMIN">ADMIN</option>
+            <option value="SUPERVISOR">SUPERVISOR</option>
+            <option value="OPERADOR">OPERADOR</option>
+            <option value="VISUALIZADOR">VISUALIZADOR</option>
+        </select>
+
+        <!-- ============================= -->
+        <!-- ESCRITÓRIOS VINCULADOS        -->
+        <!-- ============================= -->
+
+        <label>Escritórios Vinculados:</label>
+        <div class="checkbox-group">
+            {% for o in offices %}
+                <label class="chkitem">
+                    <input type="checkbox" name="offices" value="{{ o.key }}">
+                    {{ o.display }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <!-- ============================= -->
+        <!-- BOTÕES                        -->
+        <!-- ============================= -->
+
+        <button class="btn-primary">Criar Usuário</button>
+        <a href="{{ url_for('admin_users') }}" class="btn-secondary">Cancelar</a>
+
+    </form>
+
+</div>
+
+{% endblock %}
