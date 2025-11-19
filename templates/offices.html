@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Gerenciar Escritórios</h2>
+
+<div class="card dark-card">
+
+    <!-- ===================================== -->
+    <!-- CADASTRAR NOVO ESCRITÓRIO             -->
+    <!-- ===================================== -->
+
+    <form method="POST" action="{{ url_for('offices_create') }}" class="form-inline">
+        <input type="text" name="office_name" placeholder="Novo escritório" required>
+        <button class="btn-primary">Adicionar</button>
+    </form>
+
+</div>
+
+
+<div class="card dark-card">
+
+    <table class="main-table">
+        <thead>
+            <tr>
+                <th>Chave</th>
+                <th>Nome</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for o in offices %}
+            <tr>
+
+                <td>{{ o.key }}</td>
+                <td>{{ o.display }}</td>
+
+                <td>
+
+                    <!-- EDITAR -->
+                    <a class="btn-small"
+                       href="{{ url_for('office_edit', office_key=o.key) }}">
+                        Editar
+                    </a>
+
+                    <!-- EXCLUIR (somente ADMIN) -->
+                    {% if current_user.role == "ADMIN" %}
+                        {% if o.key != "CENTRAL" %}
+                        <form method="POST"
+                              action="{{ url_for('offices_delete') }}"
+                              class="inline">
+                            <input type="hidden" name="office_key" value="{{ o.key }}">
+                            <button class="btn-small btn-danger"
+                                    onclick="return confirm('Excluir escritório {{ o.display }}?')">
+                                Excluir
+                            </button>
+                        </form>
+                        {% endif %}
+                    {% endif %}
+
+                </td>
+
+            </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
