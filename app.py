@@ -14,6 +14,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 
+
 # ===============================================================
 # CONFIG
 # ===============================================================
@@ -45,8 +46,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT,
             cpf TEXT,
-            escritorio_dono TEXT,         -- ex: "CENTRAL"
-            escritorio_dono_chave TEXT,   -- ex: "CENTRAL"
+            escritorio_dono TEXT,
+            escritorio_dono_chave TEXT,
             tipo_acao TEXT,
             data_fechamento TEXT,
             pendencias TEXT,
@@ -112,14 +113,14 @@ def init_db():
         )
     """)
 
-    # usuários
+    # users
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT UNIQUE,
             full_name TEXT,
             password_hash TEXT,
-            role TEXT,       -- ADMIN/SUPERVISOR/OPERADOR/VISUALIZADOR
+            role TEXT,
             active INTEGER DEFAULT 1,
             created_at TEXT
         )
@@ -134,22 +135,25 @@ def init_db():
         )
     """)
 
-    # criar sempre CENTRAL
+    # Central sempre existe
     c.execute("""
         INSERT OR IGNORE INTO offices (office_key, display_name)
         VALUES ('CENTRAL', 'CENTRAL')
     """)
 
-    # admin padrão
+    # Admin padrão
     c.execute("SELECT COUNT(*) FROM users")
     if c.fetchone()[0] == 0:
-        now = datetime.utcnow().isoformat()
         c.execute("""
             INSERT INTO users (username, full_name, password_hash, role, active, created_at)
             VALUES (?,?,?,?,?,?)
         """, (
-            "admin", "Administrador", generate_password_hash("admin"),
-            "ADMIN", 1, now
+            "admin",
+            "Administrador",
+            generate_password_hash("admin"),
+            "ADMIN",
+            1,
+            datetime.utcnow().isoformat()
         ))
 
     conn.commit()
@@ -175,8 +179,8 @@ def normalize_office_key(name):
 def register_office(office_key, display_name):
     conn = get_conn()
     conn.execute("""
-        INSERT OR IGNORE INTO offices (office_key, display_name) 
-        VALUES (?, ?)
+        INSERT OR IGNORE INTO offices (office_key, display_name)
+        VALUES (?,?)
     """, (office_key, display_name.upper()))
     conn.commit()
     conn.close()
@@ -184,19 +188,14 @@ def register_office(office_key, display_name):
 
 def list_offices():
     conn = get_conn()
-    rows = conn.execute("""
-        SELECT office_key, display_name 
-        FROM offices ORDER BY display_name
-    """).fetchall()
+    rows = conn.execute("SELECT office_key, display_name FROM offices ORDER BY display_name").fetchall()
     conn.close()
     return [{"key": r["office_key"], "display": r["display_name"]} for r in rows]
 
 
 def get_office_display(key):
     conn = get_conn()
-    row = conn.execute("""
-        SELECT display_name FROM offices WHERE office_key=?
-    """, (key,)).fetchone()
+    row = conn.execute("SELECT display_name FROM offices WHERE office_key=?", (key,)).fetchone()
     conn.close()
     return row["display_name"] if row else key
 
@@ -206,22 +205,19 @@ def get_office_display(key):
 def ensure_tag(name):
     name = name.strip().upper()
     conn = get_conn()
-
     conn.execute("INSERT OR IGNORE INTO tags (name) VALUES (?)", (name,))
     row = conn.execute("SELECT id FROM tags WHERE name=?", (name,)).fetchone()
-
     conn.commit()
     conn.close()
-
     return row["id"]
 
 
 def get_tags_for_registro(registro_id):
     conn = get_conn()
     rows = conn.execute("""
-        SELECT t.name FROM tags t
-        JOIN registro_tags rt ON rt.tag_id = t.id
-        WHERE rt.registro_id = ?
+        SELECT t.name FROM tags t 
+        JOIN registro_tags rt ON t.id = rt.tag_id
+        WHERE rt.registro_id=?
     """, (registro_id,)).fetchall()
     conn.close()
     return [r["name"] for r in rows]
@@ -236,15 +232,24 @@ def get_user(uid):
     return row
 
 
+def get_user_offices(uid):
+    conn = get_conn()
+    rows = conn.execute("SELECT office_key FROM user_offices WHERE user_id=?", (uid,)).fetchall()
+    conn.close()
+    return [r["office_key"] for r in rows]
+
+
 def login_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         if "user_id" not in session:
             return redirect(url_for("login", next=request.path))
+
         user = get_user(session["user_id"])
         if not user or user["active"] != 1:
             session.clear()
             return redirect(url_for("login"))
+
         return f(*args, **kwargs)
     return wrap
 
@@ -299,6 +304,8 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+
 # ===============================================================
 # INDEX
 # ===============================================================
@@ -319,9 +326,6 @@ def submit():
     nome = request.form.get("nome")
     cpf = request.form.get("cpf")
 
-    # ---------------------
-    # ESCRITÓRIO DONO
-    # ---------------------
     dono_display = request.form.get("escritorio_dono")
     dono_key = normalize_office_key(dono_display)
     register_office(dono_key, dono_display)
@@ -334,18 +338,11 @@ def submit():
     observacoes = request.form.get("observacoes")
     captador = request.form.get("captador")
 
-    # ---------------------
-    # TAGS (criação livre)
-    # ---------------------
     raw_tags = request.form.get("tags", "")
     tags_list = [t.strip() for t in raw_tags.split(",") if t.strip()]
 
-    # ---------------------
-    # ESCRITÓRIOS VINCULADOS
-    # ---------------------
     offices_linked = request.form.getlist("offices_linked")
 
-    # Registrar no banco
     conn = get_conn()
     conn.execute("""
         INSERT INTO registros (
@@ -355,23 +352,18 @@ def submit():
         )
         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
     """, (
-        nome, cpf, dono_display.upper(), dono_key,
-        tipo_acao, data_fechamento, pendencias, numero_processo,
+        nome, cpf, dono_display.upper(), dono_key, tipo_acao,
+        data_fechamento, pendencias, numero_processo,
         data_protocolo, observacoes, captador,
         datetime.utcnow().isoformat()
     ))
 
     registro_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
 
-    # salvar tags
     for t in tags_list:
         tid = ensure_tag(t)
-        conn.execute("""
-            INSERT INTO registro_tags (registro_id, tag_id)
-            VALUES (?,?)
-        """, (registro_id, tid))
+        conn.execute("INSERT INTO registro_tags (registro_id, tag_id) VALUES (?,?)", (registro_id, tid))
 
-    # salvar escritórios vinculados
     for ok in offices_linked:
         key = normalize_office_key(ok)
         register_office(key, ok)
@@ -385,10 +377,10 @@ def submit():
 
     flash("Registro criado!", "success")
     return redirect(url_for("table", office=dono_key))
-    
+
 
 # ===============================================================
-# TABELA PRINCIPAL (REGISTROS)
+# TABELA PRINCIPAL
 # ===============================================================
 
 @app.route("/table")
@@ -399,29 +391,22 @@ def table():
 
     conn = get_conn()
 
-    # Buscar registros de um escritório específico
     if office == "ALL":
         rows = conn.execute("SELECT * FROM registros ORDER BY id DESC").fetchall()
     else:
         rows = conn.execute("""
-            SELECT * FROM registros 
-            WHERE escritorio_dono_chave = ?
-            ORDER BY id DESC
+            SELECT * FROM registros WHERE escritorio_dono_chave=? ORDER BY id DESC
         """, (office,)).fetchall()
 
     registros = []
     for r in rows:
-        # pegar tags
         tags = get_tags_for_registro(r["id"])
 
-        # filtrar por tag
         if filter_tag and filter_tag.upper() not in tags:
             continue
 
-        # pegar escritórios vinculados
         offs = conn.execute("""
-            SELECT office_key FROM registro_offices 
-            WHERE registro_id=?
+            SELECT office_key FROM registro_offices WHERE registro_id=?
         """, (r["id"],)).fetchall()
 
         registros.append({
@@ -442,7 +427,7 @@ def table():
 
 
 # ===============================================================
-# EDITAR REGISTRO
+# EDITAR
 # ===============================================================
 
 @app.route("/edit")
@@ -452,6 +437,7 @@ def edit():
 
     conn = get_conn()
     row = conn.execute("SELECT * FROM registros WHERE id=?", (rid,)).fetchone()
+
     if not row:
         flash("Registro não encontrado.", "error")
         conn.close()
@@ -460,8 +446,7 @@ def edit():
     tags = get_tags_for_registro(rid)
 
     offices_linked = conn.execute("""
-        SELECT office_key FROM registro_offices
-        WHERE registro_id=?
+        SELECT office_key FROM registro_offices WHERE registro_id=?
     """, (rid,)).fetchall()
 
     conn.close()
@@ -480,15 +465,12 @@ def edit():
 def update():
     rid = request.form.get("id")
 
-    # Dono
     dono_display = request.form.get("escritorio_dono")
     dono_key = normalize_office_key(dono_display)
     register_office(dono_key, dono_display)
 
-    # Campos principais
     nome = request.form.get("nome")
     cpf = request.form.get("cpf")
-
     tipo_acao = request.form.get("tipo_acao")
     data_fechamento = request.form.get("data_fechamento")
     pendencias = request.form.get("pendencias")
@@ -497,51 +479,34 @@ def update():
     observacoes = request.form.get("observacoes")
     captador = request.form.get("captador")
 
-    # TAGS
     raw_tags = request.form.get("tags", "")
     tags_list = [t.strip().upper() for t in raw_tags.split(",") if t.strip()]
 
-    # offices vinculados
     offices_linked = request.form.getlist("offices_linked")
 
     conn = get_conn()
-
-    # atualizar registro
     conn.execute("""
         UPDATE registros SET
-            nome=?, cpf=?,
-            escritorio_dono=?, escritorio_dono_chave=?,
+            nome=?, cpf=?, escritorio_dono=?, escritorio_dono_chave=?,
             tipo_acao=?, data_fechamento=?, pendencias=?,
-            numero_processo=?, data_protocolo=?,
-            observacoes=?, captador=?
+            numero_processo=?, data_protocolo=?, observacoes=?, captador=?
         WHERE id=?
     """, (
-        nome, cpf,
-        dono_display.upper(), dono_key,
-        tipo_acao, data_fechamento, pendencias,
-        numero_processo, data_protocolo,
-        observacoes, captador,
-        rid
+        nome, cpf, dono_display.upper(), dono_key, tipo_acao,
+        data_fechamento, pendencias, numero_processo, data_protocolo,
+        observacoes, captador, rid
     ))
 
-    # atualizar tags
     conn.execute("DELETE FROM registro_tags WHERE registro_id=?", (rid,))
     for t in tags_list:
         tid = ensure_tag(t)
-        conn.execute("""
-            INSERT INTO registro_tags (registro_id, tag_id)
-            VALUES (?,?)
-        """, (rid, tid))
+        conn.execute("INSERT INTO registro_tags (registro_id, tag_id) VALUES (?,?)", (rid, tid))
 
-    # atualizar escritórios vinculados
     conn.execute("DELETE FROM registro_offices WHERE registro_id=?", (rid,))
     for ok in offices_linked:
         key = normalize_office_key(ok)
         register_office(key, ok)
-        conn.execute("""
-            INSERT OR IGNORE INTO registro_offices (registro_id, office_key)
-            VALUES (?,?)
-        """, (rid, key))
+        conn.execute("INSERT INTO registro_offices (registro_id, office_key) VALUES (?,?)", (rid, key))
 
     conn.commit()
     conn.close()
@@ -551,7 +516,7 @@ def update():
 
 
 # ===============================================================
-# EXCLUIR → MOVER PARA EXCLUIDOS
+# EXCLUIR
 # ===============================================================
 
 @app.route("/delete", methods=["POST"])
@@ -567,14 +532,14 @@ def delete():
         conn.close()
         return redirect(url_for("index"))
 
-    # copiar para excluídos
     conn.execute("""
         INSERT INTO excluidos (
             nome, cpf, escritorio_dono, escritorio_dono_chave,
             tipo_acao, data_fechamento, pendencias,
             numero_processo, data_protocolo, observacoes,
             captador, created_at, data_exclusao
-        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+        )
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
     """, (
         row["nome"], row["cpf"],
         row["escritorio_dono"], row["escritorio_dono_chave"],
@@ -584,13 +549,14 @@ def delete():
         datetime.utcnow().isoformat()
     ))
 
-    # remover original
     conn.execute("DELETE FROM registros WHERE id=?", (rid,))
     conn.commit()
     conn.close()
 
     flash("Registro excluído.", "success")
     return redirect(url_for("table"))
+
+
 # ===============================================================
 # EXCLUÍDOS — LISTAR
 # ===============================================================
@@ -606,7 +572,7 @@ def excluidos():
 
 
 # ===============================================================
-# RESTAURAR REGISTRO
+# RESTAURAR
 # ===============================================================
 
 @app.route("/restore", methods=["POST"])
@@ -623,7 +589,6 @@ def restore():
         conn.close()
         return redirect(url_for("excluidos"))
 
-    # restaurar
     conn.execute("""
         INSERT INTO registros (
             nome, cpf, escritorio_dono, escritorio_dono_chave,
@@ -648,7 +613,7 @@ def restore():
 
 
 # ===============================================================
-# EXCLUIR PERMANENTE
+# EXCLUIR DEFINITIVO
 # ===============================================================
 
 @app.route("/delete_forever", methods=["POST"])
@@ -656,7 +621,6 @@ def restore():
 @require_roles("ADMIN")
 def delete_forever():
     rid = request.form.get("id")
-
     conn = get_conn()
     conn.execute("DELETE FROM excluidos WHERE id=?", (rid,))
     conn.commit()
@@ -678,7 +642,7 @@ def offices_page():
 
 
 # ===============================================================
-# CRIAR OFFICE
+# OFFICES — CRIAR
 # ===============================================================
 
 @app.route("/offices/create", methods=["POST"])
@@ -694,7 +658,7 @@ def offices_create():
 
 
 # ===============================================================
-# EDITAR OFFICE
+# OFFICE EDIT
 # ===============================================================
 
 @app.route("/office/edit/<office_key>", methods=["GET", "POST"])
@@ -705,11 +669,8 @@ def office_edit(office_key):
 
     if request.method == "POST":
         new_name = request.form.get("display_name").strip().upper()
-
         conn = get_conn()
-        conn.execute("""
-            UPDATE offices SET display_name=? WHERE office_key=?
-        """, (new_name, office_key))
+        conn.execute("UPDATE offices SET display_name=? WHERE office_key=?", (new_name, office_key))
         conn.commit()
         conn.close()
 
@@ -718,9 +679,7 @@ def office_edit(office_key):
 
     conn = get_conn()
     row = conn.execute("""
-        SELECT office_key, display_name 
-        FROM offices 
-        WHERE office_key=?
+        SELECT office_key, display_name FROM offices WHERE office_key=?
     """, (office_key,)).fetchone()
     conn.close()
 
@@ -732,7 +691,7 @@ def office_edit(office_key):
 
 
 # ===============================================================
-# DELETAR OFFICE
+# OFFICE DELETE
 # ===============================================================
 
 @app.route("/offices/delete", methods=["POST"])
@@ -752,6 +711,8 @@ def offices_delete():
 
     flash("Escritório removido.", "success")
     return redirect(url_for("offices_page"))
+
+
 # ===============================================================
 # USERS — LISTAR
 # ===============================================================
@@ -761,11 +722,9 @@ def offices_delete():
 @require_roles("ADMIN")
 def admin_users():
     conn = get_conn()
-
     rows = conn.execute("""
-        SELECT id, username, full_name, role, active, created_at 
-        FROM users 
-        ORDER BY id DESC
+        SELECT id, username, full_name, role, active, created_at
+        FROM users ORDER BY id DESC
     """).fetchall()
 
     users = []
@@ -789,7 +748,7 @@ def admin_users():
 
 
 # ===============================================================
-# USERS — CRIAR
+# USER CREATE
 # ===============================================================
 
 @app.route("/admin/users/create", methods=["GET", "POST"])
@@ -814,11 +773,9 @@ def admin_users_create():
                 INSERT INTO users (username, full_name, password_hash, role, active, created_at)
                 VALUES (?,?,?,?,?,?)
             """, (
-                username,
-                full_name,
+                username, full_name,
                 generate_password_hash(password),
-                role,
-                1,
+                role, 1,
                 datetime.utcnow().isoformat()
             ))
 
@@ -844,7 +801,7 @@ def admin_users_create():
 
 
 # ===============================================================
-# USERS — EDITAR
+# USER EDIT
 # ===============================================================
 
 @app.route("/admin/users/edit/<int:user_id>", methods=["GET", "POST"])
@@ -861,6 +818,7 @@ def admin_users_edit(user_id):
         conn.execute("""
             UPDATE users SET full_name=?, role=?, active=? WHERE id=?
         """, (full_name, role, active, user_id))
+
         conn.commit()
         conn.close()
 
@@ -878,7 +836,7 @@ def admin_users_edit(user_id):
 
 
 # ===============================================================
-# USERS — ATRIBUIR ESCRITÓRIOS
+# USER OFFICES
 # ===============================================================
 
 @app.route("/admin/users/offices/<int:user_id>", methods=["GET", "POST"])
@@ -893,7 +851,8 @@ def admin_users_offices(user_id):
 
         for ok in offices_sel:
             conn.execute("""
-                INSERT INTO user_offices (user_id, office_key) VALUES (?,?)
+                INSERT INTO user_offices (user_id, office_key)
+                VALUES (?,?)
             """, (user_id, ok))
 
         conn.commit()
@@ -912,7 +871,7 @@ def admin_users_offices(user_id):
 
 
 # ===============================================================
-# USERS — RESET PASSWORD
+# RESET PASSWORD
 # ===============================================================
 
 @app.route("/admin/users/reset_password/<int:user_id>", methods=["POST"])
@@ -926,10 +885,8 @@ def admin_users_reset_password(user_id):
         return redirect(url_for("admin_users"))
 
     conn = get_conn()
-    conn.execute("""
-        UPDATE users SET password_hash=? WHERE id=?
-    """, (generate_password_hash(new_password), user_id))
-
+    conn.execute("UPDATE users SET password_hash=? WHERE id=?",
+                 (generate_password_hash(new_password), user_id))
     conn.commit()
     conn.close()
 
@@ -938,7 +895,7 @@ def admin_users_reset_password(user_id):
 
 
 # ===============================================================
-# USERS — DELETAR
+# DELETE USER
 # ===============================================================
 
 @app.route("/admin/users/delete/<int:user_id>", methods=["POST"])
@@ -962,34 +919,33 @@ def admin_users_delete(user_id):
 @app.route("/export/csv")
 @login_required
 def export_csv():
-    office = request.args.get("office", "CENTRAL")
+    office = request.args.get("office", "CENTRAL").upper()
 
     conn = get_conn()
 
-    if office.upper() == "ALL":
+    if office == "ALL":
         rows = conn.execute("SELECT * FROM registros").fetchall()
     else:
-        key = normalize_office_key(office)
         rows = conn.execute("""
             SELECT * FROM registros WHERE escritorio_dono_chave=?
-        """, (f"office_{key}",)).fetchall()
+        """, (office,)).fetchall()
 
     conn.close()
 
     output = io.StringIO()
-    writer = csv.writer(output, delimiter=';')
+    writer = csv.writer(output, delimiter=";")
 
     writer.writerow([
         "ID", "Nome", "CPF", "Escritório Dono",
         "Tipo Ação", "Data Fechamento", "Pendências",
-        "Nº Processo", "Data Protocolo",
-        "Observações", "Captador"
+        "Nº Processo", "Data Protocolo", "Observações", "Captador"
     ])
 
     for row in rows:
         writer.writerow([
-            row["id"], row["nome"], row["cpf"], row["escritorio_dono"],
-            row["tipo_acao"], row["data_fechamento"], row["pendencias"],
+            row["id"], row["nome"], row["cpf"],
+            row["escritorio_dono"], row["tipo_acao"],
+            row["data_fechamento"], row["pendencias"],
             row["numero_processo"], row["data_protocolo"],
             row["observacoes"], row["captador"]
         ])
@@ -1010,16 +966,16 @@ def export_csv():
 @app.route("/export/pdf")
 @login_required
 def export_pdf():
-    office = request.args.get("office", "CENTRAL")
+    office = request.args.get("office", "CENTRAL").upper()
 
     conn = get_conn()
-    if office.upper() == "ALL":
+
+    if office == "ALL":
         rows = conn.execute("SELECT * FROM registros").fetchall()
     else:
-        key = normalize_office_key(office)
         rows = conn.execute("""
             SELECT * FROM registros WHERE escritorio_dono_chave=?
-        """, (f"office_{key}",)).fetchall()
+        """, (office,)).fetchall()
 
     conn.close()
 
@@ -1036,8 +992,8 @@ def export_pdf():
     for row in rows:
         if y < 60:
             p.showPage()
-            y = height - 50
             p.setFont("Helvetica", 10)
+            y = height - 50
 
         p.drawString(50, y, f"ID: {row['id']} | Nome: {row['nome']} | CPF: {row['cpf']}")
         y -= 15
@@ -1058,7 +1014,7 @@ def export_pdf():
 
 
 # ===============================================================
-# RUN LOCAL
+# RUN
 # ===============================================================
 
 if __name__ == "__main__":
