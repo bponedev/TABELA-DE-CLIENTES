@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Vincular Escritórios — {{ user.full_name }}</h2>
+
+<div class="card dark-card">
+
+    <form method="POST" action="{{ url_for('admin_users_offices', user_id=user.id) }}">
+
+        <!-- ============================= -->
+        <!-- LISTA DE ESCRITÓRIOS          -->
+        <!-- ============================= -->
+
+        <label>Selecione os escritórios atribuídos:</label>
+
+        <div class="checkbox-group">
+            {% for o in offices %}
+                <label class="chkitem">
+                    <input type="checkbox"
+                           name="offices"
+                           value="{{ o.key }}"
+                           {% if o.key in assigned %}checked{% endif %}>
+                    {{ o.display }}
+                </label>
+            {% endfor %}
+        </div>
+
+        <!-- ============================= -->
+        <!-- BOTÕES                        -->
+        <!-- ============================= -->
+
+        <button class="btn-primary">Salvar Vínculos</button>
+        <a href="{{ url_for('admin_users') }}" class="btn-secondary">Cancelar</a>
+
+    </form>
+
+</div>
+
+{% endblock %}
+
