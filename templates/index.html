@@ -1,0 +1,61 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Novo Cadastro</h1>
+
+<div class="card">
+<form action="{{ url_for('submit') }}" method="post">
+
+    <label>Nome
+        <input name="nome" required>
+    </label>
+
+    <label>CPF
+        <input name="cpf" required>
+    </label>
+
+    <label>Escritório
+        <select name="escritorio" required>
+            {% for o in offices %}
+                <option value="{{ o.display }}">{{ o.display }}</option>
+            {% endfor %}
+        </select>
+    </label>
+
+    <label>Tipo de ação
+        <input name="tipo_acao">
+    </label>
+
+    <label>Data do fechamento
+        <input type="date" name="data_fechamento">
+    </label>
+
+    <label>Pendências
+        <input name="pendencias">
+    </label>
+
+    <label>Nº do processo
+        <input name="numero_processo">
+    </label>
+
+    <label>Data do protocolo
+        <input type="date" name="data_protocolo">
+    </label>
+
+    <label>Observações
+        <textarea name="observacoes"></textarea>
+    </label>
+
+    <label>Captador
+        <select name="captador">
+            <option>PAGO</option>
+            <option>NÃO PAGO</option>
+        </select>
+    </label>
+
+    <button class="btn" type="submit">Salvar</button>
+</form>
+</div>
+
+{% endblock %}
