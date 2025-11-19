@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS principal -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+    <div class="container">
+        <strong>SISTEMA</strong> —
+
+        {% if current_user %}
+
+            <a href="{{ url_for('submit_page') }}">Novo Cadastro</a>
+            <a href="{{ url_for('table', office='CENTRAL') }}">Registros</a>
+            <a href="{{ url_for('excluidos') }}">Excluídos</a>
+
+            {% if current_user.role in ["ADMIN", "SUPERVISOR"] %}
+                <a href="{{ url_for('offices_page') }}">Gerenciar Escritórios</a>
+            {% endif %}
+
+            {% if current_user.role == "ADMIN" %}
+                <a href="{{ url_for('admin_users') }}">Usuários</a>
+            {% endif %}
+
+            <a href="{{ url_for('logout') }}">Sair</a>
+
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
+</header>
+
+
+<div class="container">
+
+    <!-- CAIXAS DE MENSAGENS -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, msg in messages %}
+                <div class="flash flash-{{ category }}">{{ msg }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- CONTEÚDO DAS PÁGINAS -->
+    {% block content %}
+    {% endblock %}
+
+</div>
+
+<!-- JS principal -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
