@@ -3,7 +3,7 @@
 {% block content %}
 <h2>Editar Registro #{{ cliente.id }}</h2>
 
-<div class="card form-card">
+<div class="card form-card dark-card">
 
     <form method="POST" action="{{ url_for('update') }}">
         <input type="hidden" name="id" value="{{ cliente.id }}">
@@ -16,12 +16,12 @@
         <input type="text" name="nome" value="{{ cliente.nome }}" required>
 
         <label>CPF:</label>
-        <input type="text" name="cpf" value="{{ cliente.cpf }}" required>
-
+        <input type="text" name="cpf" value="{{ cliente.cpf }}">
 
         <!-- ================================= -->
-        <!-- ESCRITÓRIO DONO (OBRIGATÓRIO)     -->
+        <!-- ESCRITÓRIO DONO                  -->
         <!-- ================================= -->
+
         <label>Escritório Dono:</label>
         <select name="escritorio_dono" required>
             {% for o in offices %}
@@ -31,7 +31,6 @@
                 </option>
             {% endfor %}
         </select>
-
 
         <!-- ================================= -->
         <!-- ESCRITÓRIOS VINCULADOS (MULTI)    -->
@@ -48,7 +47,6 @@
                 </label>
             {% endfor %}
         </div>
-
 
         <!-- ============================== -->
         <!-- CAMPOS DO PROCESSO             -->
@@ -75,7 +73,6 @@
         <label>Captador:</label>
         <input type="text" name="captador" value="{{ cliente.captador }}">
 
-
         <!-- ============================== -->
         <!-- TAGS                           -->
         <!-- ============================== -->
@@ -87,20 +84,18 @@
                    value="{{ tags|join(', ') }}"
                    placeholder="ADMINISTRATIVO, JURÍDICO, ...">
         {% else %}
-            <!-- Operador não pode editar -->
             <input type="text" value="{{ tags|join(', ') }}" disabled>
             <input type="hidden" name="tags" value="{{ tags|join(', ') }}">
         {% endif %}
 
-        <!-- Preview das tags -->
         <div class="tag-preview">
             {% for t in tags %}
-                <span class="tag-chip" style="background-color: {{ t|hashcolor }};">
+                <span class="tag-chip"
+                      style="background-color: {{ '#%06x' % (hash(t) & 0xFFFFFF) }};">
                     {{ t }}
                 </span>
             {% endfor %}
         </div>
-
 
         <!-- ============================== -->
         <!-- BOTÕES                         -->
@@ -108,6 +103,7 @@
 
         <button class="btn-primary">Salvar Alterações</button>
         <a href="{{ url_for('table', office=cliente.escritorio_dono_chave) }}" class="btn-secondary">Cancelar</a>
+
     </form>
 
 </div>
