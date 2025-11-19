@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Registros</h2>
+
+<!-- ============================= -->
+<!-- FILTROS SUPERIORES           -->
+<!-- ============================= -->
+
+<div class="filters card">
+
+    <!-- FILTRO DE ESCRITÓRIO -->
+    <form method="GET" action="{{ url_for('table') }}" class="filter-item">
+        <label>Escritório:</label>
+        <select name="office" onchange="this.form.submit()">
+            <option value="ALL" {% if office == 'ALL' %}selected{% endif %}>TODOS</option>
+
+            {% for o in offices %}
+                <option value="{{ o.key }}"
+                    {% if office == o.key %}selected{% endif %}>
+                    {{ o.display }}
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <!-- FILTRO DE TAGS -->
+    <form method="GET" action="{{ url_for('table') }}" class="filter-item">
+        <input type="hidden" name="office" value="{{ office }}">
+        <label>Tag:</label>
+        <input type="text" name="tag" value="{{ filter_tag or '' }}" placeholder="EX: ADMINISTRATIVO">
+        <button class="btn-secondary">Filtrar</button>
+    </form>
+
+    <!-- BOTÕES DE EXPORTAÇÃO -->
+    <div class="filter-item">
+        <a class="btn-secondary" href="{{ url_for('export_csv', office=office) }}">Exportar CSV</a>
+        <a class="btn-secondary" href="{{ url_for('export_pdf', office=office) }}">Exportar PDF</a>
+    </div>
+</div>
+
+
+<!-- ============================= -->
+<!-- TABELA                       -->
+<!-- ============================= -->
+
+<table class="main-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>CPF</th>
+            <th>Dono</th>
+            <th>Escritórios Vinculados</th>
+            <th>Tags</th>
+            <th>Ação</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in registros %}
+        {% set r = item.data %}
+        <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.nome }}</td>
+            <td>{{ r.cpf }}</td>
+
+            <!-- ESCRITÓRIO DONO -->
+            <td>
+                <span class="badge badge-owner">
+                    {{ r.escritorio_dono }}
+                </span>
+            </td>
+
+            <!-- ESCRITÓRIOS VINCULADOS -->
+            <td>
+                {% for o in item.offices %}
+                    <span class="badge badge-office">
+                        {{ o }}
+                    </span>
+                {% endfor %}
+            </td>
+
+            <!-- TAGS COLORIDAS -->
+            <td>
+                {% for t in item.tags %}
+                    <span class="tag-chip" style="background-color: {{ t|hashcolor }};">
+                        {{ t }}
+                    </span>
+                {% endfor %}
+            </td>
+
+            <!-- BOTÕES (NO TOPO) -->
+            <td>
+                <a class="btn-small" href="{{ url_for('edit', id=r.id) }}">Editar</a>
+
+                <form action="{{ url_for('delete') }}" method="POST" class="inline">
+                    <input type="hidden" name="id" value="{{ r.id }}">
+                    <button class="btn-small btn-danger"
+                            onclick="return confirm('Deseja excluir este registro?')">
+                        Excluir
+                    </button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock %}
