@@ -15,7 +15,7 @@
         <input type="text" name="nome" required>
 
         <label>CPF:</label>
-        <input type="text" name="cpf" required>
+        <input type="text" name="cpf">
 
 
         <!-- ================================= -->
@@ -76,10 +76,10 @@
         <!-- ============================== -->
 
         <label>Tags (separadas por vírgula):</label>
-
         <input type="text" name="tags"
                placeholder="ADMINISTRATIVO, JURÍDICO, ...">
 
+        <!-- Preview -->
         <div id="tag-preview" class="tag-preview"></div>
 
 
@@ -92,44 +92,5 @@
     </form>
 
 </div>
-
-
-<!-- ============================== -->
-<!-- SCRIPT PARA PREVIEW DE TAGS   -->
-<!-- ============================== -->
-<script>
-    const tagInput = document.querySelector('input[name="tags"]');
-    const preview = document.querySelector('#tag-preview');
-
-    function hashColor(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        let color = '#';
-        for (let i = 0; i < 3; i++) {
-            color += ('00' + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2);
-        }
-        return color;
-    }
-
-    function renderPreview() {
-        preview.innerHTML = "";
-
-        const tags = tagInput.value.split(",")
-                     .map(t => t.trim())
-                     .filter(t => t.length > 0);
-
-        tags.forEach(t => {
-            const chip = document.createElement("span");
-            chip.classList.add("tag-chip");
-            chip.style.backgroundColor = hashColor(t.toUpperCase());
-            chip.textContent = t.toUpperCase();
-            preview.appendChild(chip);
-        });
-    }
-
-    tagInput.addEventListener("input", renderPreview);
-</script>
 
 {% endblock %}
