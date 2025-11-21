@@ -3,15 +3,13 @@
 {% block content %}
 <h2>Usuários do Sistema</h2>
 
-<div class="card dark-card">
+<div class="card">
 
-    <div class="top-actions">
-        <a href="{{ url_for('admin_users_create') }}" class="btn-primary">
-            + Novo Usuário
-        </a>
-    </div>
+    <a href="{{ url_for('admin_users_create') }}" class="btn-primary" style="margin-bottom: 15px;">
+        + Criar Novo Usuário
+    </a>
 
-    <table class="main-table">
+    <table>
         <thead>
             <tr>
                 <th>ID</th>
@@ -20,7 +18,6 @@
                 <th>Função</th>
                 <th>Ativo</th>
                 <th>Escritórios</th>
-                <th>Criado Em</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -32,64 +29,53 @@
                 <td>{{ u.username }}</td>
                 <td>{{ u.full_name }}</td>
 
-                <!-- ROLE -->
                 <td>
-                    <span class="badge badge-role">{{ u.role }}</span>
+                    <span class="badge badge-owner">{{ u.role }}</span>
                 </td>
 
-                <!-- STATUS -->
                 <td>
                     {% if u.active == 1 %}
-                        <span class="badge badge-active">ATIVO</span>
+                        <span class="badge" style="background:#2ecc71;">Sim</span>
                     {% else %}
-                        <span class="badge badge-inactive">INATIVO</span>
+                        <span class="badge" style="background:#e74c3c;">Não</span>
                     {% endif %}
                 </td>
 
-                <!-- ESCRITÓRIOS -->
                 <td>
-                    {% for off in u.offices %}
-                        <span class="badge badge-office">{{ off }}</span>
+                    {% for o in u.offices %}
+                        <span class="badge badge-office">{{ o }}</span>
                     {% endfor %}
                 </td>
 
-                <td>{{ u.created_at[:10] }}</td>
+                <td>
+                    <a href="{{ url_for('admin_users_edit', user_id=u.id) }}" class="btn-small">Editar</a>
 
-                <!-- AÇÕES -->
-                <td class="actions">
-
-                    <a class="btn-small"
-                       href="{{ url_for('admin_users_edit', user_id=u.id) }}">
-                        Editar
-                    </a>
-
-                    <a class="btn-small"
-                       href="{{ url_for('admin_users_offices', user_id=u.id) }}">
+                    <a href="{{ url_for('admin_users_offices', user_id=u.id) }}" class="btn-small btn-secondary">
                         Escritórios
                     </a>
 
                     <!-- RESET PASSWORD -->
                     <form action="{{ url_for('admin_users_reset_password', user_id=u.id) }}"
-                          method="POST" class="inline">
-                        <input type="hidden" name="new_password"
-                               value="123456">
-                        <button class="btn-small btn-warning"
-                                onclick="return confirm('Redefinir senha para 123456?')">
-                            Resetar Senha
+                          method="POST"
+                          class="inline">
+                        <input type="hidden" name="new_password" value="123456">
+                        <button class="btn-small btn-secondary"
+                                onclick="return confirm('Redefinir senha para 123456?');">
+                            Reset Senha
                         </button>
                     </form>
 
                     <!-- DELETE -->
                     <form action="{{ url_for('admin_users_delete', user_id=u.id) }}"
-                          method="POST" class="inline">
+                          method="POST"
+                          class="inline">
                         <button class="btn-small btn-danger"
-                                onclick="return confirm('Excluir este usuário?')">
+                                onclick="return confirm('Excluir usuário permanentemente?');">
                             Excluir
                         </button>
                     </form>
 
                 </td>
-
             </tr>
             {% endfor %}
         </tbody>
