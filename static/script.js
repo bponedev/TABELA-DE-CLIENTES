@@ -1,94 +1,65 @@
-/* ===================================================== */
-/*                 FUNÇÃO HASH → COR                    */
-/* ===================================================== */
-/* Gera uma cor única e estável para cada tag */
+/* =======================================================
+   SCRIPT GERAL — TAGS, MENU, FUNCIONALIDADES GLOBAIS
+========================================================= */
+
+/* ----------------------------------------------
+   Função de hash → gera cor consistente p/ TAGS
+---------------------------------------------- */
 function hashColor(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
         hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
-    let color = "#";
+    let color = '#';
     for (let i = 0; i < 3; i++) {
-        color += ("00" + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2);
+        color += ('00' + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2);
     }
     return color;
 }
 
 
-/* ===================================================== */
-/*           PREVIEW AUTOMÁTICO DE TAGS                 */
-/* ===================================================== */
+/* ----------------------------------------------
+   Preview automático de TAGS na criação
+---------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+    const tagInput = document.querySelector('input[name="tags"]');
+    const preview = document.querySelector('#tag-preview');
 
-function setupTagPreview() {
-    const input = document.querySelector('input[name="tags"]');
-    const preview = document.querySelector("#tag-preview");
+    if (tagInput && preview) {
 
-    if (!input || !preview) return;
+        function renderPreview() {
+            preview.innerHTML = "";
 
-    function render() {
-        preview.innerHTML = "";
+            const tags = tagInput.value.split(",")
+                .map(t => t.trim())
+                .filter(t => t.length > 0);
 
-        const tags = input.value
-            .split(",")
-            .map(t => t.trim())
-            .filter(t => t.length > 0);
+            tags.forEach(t => {
+                const chip = document.createElement("span");
+                chip.classList.add("tag-chip");
+                chip.style.backgroundColor = hashColor(t.toUpperCase());
+                chip.textContent = t.toUpperCase();
+                preview.appendChild(chip);
+            });
+        }
 
-        tags.forEach(t => {
-            const span = document.createElement("span");
-            span.classList.add("tag-chip");
-            span.style.backgroundColor = hashColor(t.toUpperCase());
-            span.textContent = t.toUpperCase();
-            preview.appendChild(span);
+        tagInput.addEventListener("input", renderPreview);
+        renderPreview();
+    }
+});
+
+
+/* ------------------------------------------------
+   Exibir senha (login)
+-------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("toggle-pass");
+    const field = document.getElementById("password");
+
+    if (btn && field) {
+        btn.addEventListener("click", () => {
+            field.type = field.type === "password" ? "text" : "password";
+            btn.innerText = field.type === "password" ? "Mostrar" : "Ocultar";
         });
     }
-
-    input.addEventListener("input", render);
-    render();
-}
-
-document.addEventListener("DOMContentLoaded", setupTagPreview);
-
-
-/* ===================================================== */
-/*     CONFIRMAÇÕES DE SEGURANÇA (EXCLUIR / RESTAURAR)  */
-/* ===================================================== */
-
-function confirmarExclusao() {
-    return confirm("Deseja realmente excluir este registro?");
-}
-
-function confirmarRestaurar() {
-    return confirm("Deseja restaurar este registro?");
-}
-
-
-/* ===================================================== */
-/*   Mostra/esconde senha no login (compatível futuro)   */
-/* ===================================================== */
-
-function togglePassword(idInput, idIcon) {
-    let input = document.getElementById(idInput);
-    let icon = document.getElementById(idIcon);
-
-    if (!input) return;
-
-    if (input.type === "password") {
-        input.type = "text";
-        if (icon) icon.textContent = "🙈";
-    } else {
-        input.type = "password";
-        if (icon) icon.textContent = "👁️";
-    }
-}
-
-
-/* ===================================================== */
-/*             MARCAR TODOS (checkbox geral)            */
-/* ===================================================== */
-
-function toggleCheckAll(masterId, groupName) {
-    let master = document.getElementById(masterId);
-    let boxes = document.querySelectorAll("input[name='" + groupName + "']");
-
-    boxes.forEach(b => (b.checked = master.checked));
-}
+});
