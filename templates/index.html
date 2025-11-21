@@ -1,61 +1,135 @@
-<!-- templates/index.html -->
 {% extends "base.html" %}
+
 {% block content %}
+<h2>Novo Cadastro</h2>
 
-<h1>Novo Cadastro</h1>
+<div class="card form-card">
 
-<div class="card">
-<form action="{{ url_for('submit') }}" method="post">
+    <form method="POST" action="{{ url_for('submit') }}">
 
-    <label>Nome
-        <input name="nome" required>
-    </label>
+        <!-- ============================== -->
+        <!-- CAMPOS PRINCIPAIS             -->
+        <!-- ============================== -->
 
-    <label>CPF
-        <input name="cpf" required>
-    </label>
+        <label>Nome:</label>
+        <input type="text" name="nome" required>
 
-    <label>Escritório
-        <select name="escritorio" required>
+        <label>CPF:</label>
+        <input type="text" name="cpf" required>
+
+
+        <!-- ================================= -->
+        <!-- ESCRITÓRIO DONO (OBRIGATÓRIO)     -->
+        <!-- ================================= -->
+
+        <label>Escritório Dono:</label>
+        <select name="escritorio_dono" required>
             {% for o in offices %}
                 <option value="{{ o.display }}">{{ o.display }}</option>
             {% endfor %}
         </select>
-    </label>
 
-    <label>Tipo de ação
-        <input name="tipo_acao">
-    </label>
 
-    <label>Data do fechamento
+        <!-- ================================= -->
+        <!-- ESCRITÓRIOS VINCULADOS (MULTI)    -->
+        <!-- ================================= -->
+
+        <label>Escritórios Vinculados:</label>
+        <div class="checkbox-group">
+            {% for o in offices %}
+                <label class="chkitem">
+                    <input type="checkbox" name="offices_linked" value="{{ o.display }}">
+                    {{ o.display }}
+                </label>
+            {% endfor %}
+        </div>
+
+
+        <!-- ============================== -->
+        <!-- CAMPOS DO PROCESSO             -->
+        <!-- ============================== -->
+
+        <label>Tipo de Ação:</label>
+        <input type="text" name="tipo_acao">
+
+        <label>Data de Fechamento:</label>
         <input type="date" name="data_fechamento">
-    </label>
 
-    <label>Pendências
-        <input name="pendencias">
-    </label>
+        <label>Pendências:</label>
+        <textarea name="pendencias"></textarea>
 
-    <label>Nº do processo
-        <input name="numero_processo">
-    </label>
+        <label>Número do Processo:</label>
+        <input type="text" name="numero_processo">
 
-    <label>Data do protocolo
+        <label>Data de Protocolo:</label>
         <input type="date" name="data_protocolo">
-    </label>
 
-    <label>Observações
+        <label>Observações:</label>
         <textarea name="observacoes"></textarea>
-    </label>
 
-    <label>Captador
-        <select name="captador">
-            <option>PAGO</option>
-            <option>NÃO PAGO</option>
-        </select>
-    </label>
+        <label>Captador:</label>
+        <input type="text" name="captador">
 
-    <button class="btn" type="submit">Salvar</button>
-</form>
+
+        <!-- ============================== -->
+        <!-- TAGS                           -->
+        <!-- ============================== -->
+
+        <label>Tags (separadas por vírgula):</label>
+
+        <input type="text" name="tags"
+               placeholder="ADMINISTRATIVO, JURÍDICO, ...">
+
+        <div id="tag-preview" class="tag-preview"></div>
+
+
+        <!-- ============================== -->
+        <!-- BOTÕES                         -->
+        <!-- ============================== -->
+
+        <button class="btn-primary">Salvar Registro</button>
+
+    </form>
+
 </div>
+
+
+<!-- ============================== -->
+<!-- SCRIPT PARA PREVIEW DE TAGS   -->
+<!-- ============================== -->
+<script>
+    const tagInput = document.querySelector('input[name="tags"]');
+    const preview = document.querySelector('#tag-preview');
+
+    function hashColor(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        let color = '#';
+        for (let i = 0; i < 3; i++) {
+            color += ('00' + ((hash >> (i * 8)) & 0xFF).toString(16)).slice(-2);
+        }
+        return color;
+    }
+
+    function renderPreview() {
+        preview.innerHTML = "";
+
+        const tags = tagInput.value.split(",")
+                     .map(t => t.trim())
+                     .filter(t => t.length > 0);
+
+        tags.forEach(t => {
+            const chip = document.createElement("span");
+            chip.classList.add("tag-chip");
+            chip.style.backgroundColor = hashColor(t.toUpperCase());
+            chip.textContent = t.toUpperCase();
+            preview.appendChild(chip);
+        });
+    }
+
+    tagInput.addEventListener("input", renderPreview);
+</script>
 
 {% endblock %}
