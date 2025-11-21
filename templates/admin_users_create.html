@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Novo Usuário</h2>
+<h2>Criar Novo Usuário</h2>
 
 <div class="card dark-card">
 
     <form method="POST" action="{{ url_for('admin_users_create') }}">
 
-        <!-- ========================= -->
-        <!-- DADOS PRINCIPAIS         -->
-        <!-- ========================= -->
+        <!-- ============================= -->
+        <!-- DADOS PRINCIPAIS DO USUÁRIO   -->
+        <!-- ============================= -->
 
-        <label>Nome de Usuário (login):</label>
+        <label>Username (login):</label>
         <input type="text" name="username" required>
 
         <label>Nome Completo:</label>
@@ -20,10 +20,9 @@
         <label>Senha Inicial:</label>
         <input type="password" name="password" required>
 
-
-        <!-- ========================= -->
-        <!-- NÍVEL DE ACESSO          -->
-        <!-- ========================= -->
+        <!-- ============================= -->
+        <!-- FUNÇÃO                        -->
+        <!-- ============================= -->
 
         <label>Função:</label>
         <select name="role" required>
@@ -33,13 +32,11 @@
             <option value="VISUALIZADOR">VISUALIZADOR</option>
         </select>
 
-
-        <!-- ========================= -->
-        <!-- ESCRITÓRIOS VINCULADOS   -->
-        <!-- ========================= -->
+        <!-- ============================= -->
+        <!-- ESCRITÓRIOS VINCULADOS        -->
+        <!-- ============================= -->
 
         <label>Escritórios Vinculados:</label>
-
         <div class="checkbox-group">
             {% for o in offices %}
                 <label class="chkitem">
@@ -49,18 +46,11 @@
             {% endfor %}
         </div>
 
-        <!-- Marcar Todos -->
-        <label style="margin-top:10px;">
-            <input type="checkbox" id="check_all_offices" onclick="toggleCheckAll('check_all_offices', 'offices')">
-            Selecionar todos
-        </label>
+        <!-- ============================= -->
+        <!-- BOTÕES                        -->
+        <!-- ============================= -->
 
-
-        <!-- ========================= -->
-        <!-- BOTÕES                   -->
-        <!-- ========================= -->
-
-        <button class="btn-primary" style="margin-top:20px;">Criar Usuário</button>
+        <button class="btn-primary">Criar Usuário</button>
         <a href="{{ url_for('admin_users') }}" class="btn-secondary">Cancelar</a>
 
     </form>
