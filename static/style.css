@@ -1,197 +1,168 @@
-/* =============================== */
-/*          RESET BÁSICO          */
-/* =============================== */
-
-* {
+/* ===================================================== */
+/*                 TEMA GERAL - DARK MODE               */
+/* ===================================================== */
+body {
+    background: #1d1f23;
+    color: #f2f2f2;
+    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: "Segoe UI", sans-serif;
-}
-
-body {
-    background: #1c1c1c;
-    color: #e6e6e6;
-    padding-bottom: 80px;
 }
 
 a {
-    color: #4da3ff;
+    color: #61a8ff;
     text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
+.container {
+    width: 95%;
+    margin: auto;
+    max-width: 1100px;
 }
 
 
-/* =============================== */
-/*            TOP BAR             */
-/* =============================== */
+/* ===================================================== */
+/*                     TOPBAR                            */
+/* ===================================================== */
 
 .topbar {
-    background: #111;
-    padding: 15px 0;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #444;
+    background: #111317;
+    padding: 12px 0;
+    border-bottom: 1px solid #2a2d33;
 }
 
 .topbar a {
-    margin-left: 15px;
-    font-weight: bold;
+    margin-right: 15px;
+}
+
+.topbar strong {
+    color: #ffffff;
 }
 
 
-/* =============================== */
-/*            CONTAINER           */
-/* =============================== */
-
-.container {
-    width: 90%;
-    max-width: 1100px;
-    margin: auto;
-}
-
-
-/* =============================== */
-/*               CARD             */
-/* =============================== */
+/* ===================================================== */
+/*                       CARDS                           */
+/* ===================================================== */
 
 .card {
-    background: #262626;
+    background: #2a2d33;
     padding: 20px;
-    border-radius: 10px;
-    margin-top: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.35);
 }
 
-.dark-card {
-    background: #2e2e2e;
-}
-
-
-/* =============================== */
-/*        FORMULÁRIOS             */
-/* =============================== */
-
-label {
-    display: block;
+.form-card label {
     margin-top: 12px;
-    font-weight: bold;
+    display: block;
+    font-size: 14px;
 }
 
-input[type="text"],
-input[type="date"],
-input[type="password"],
-select,
-textarea {
+.form-card input,
+.form-card select,
+.form-card textarea {
     width: 100%;
     padding: 10px;
-    background: #1c1c1c;
-    border: 1px solid #555;
-    color: #fff;
-    border-radius: 6px;
+    border-radius: 8px;
+    border: none;
     margin-top: 5px;
+    background: #1f2126;
+    color: #fff;
 }
 
 textarea {
-    min-height: 90px;
+    min-height: 75px;
 }
 
 
-/* =============================== */
-/*             BOTÕES             */
-/* =============================== */
-
-button,
-.btn-primary,
-.btn-secondary,
-.btn-danger,
-.btn-small {
-    padding: 10px 16px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    display: inline-block;
-}
+/* ===================================================== */
+/*                       BOTÕES                          */
+/* ===================================================== */
 
 .btn-primary {
-    background: #007bff;
+    background: #4b8bff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
     color: #fff;
+    cursor: pointer;
+    margin-top: 15px;
 }
 
 .btn-secondary {
-    background: #666;
-    color: #fff;
+    background: #383c44;
+    color: #ddd;
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: inline-block;
 }
 
 .btn-danger {
-    background: #d9534f;
+    background: #d44;
     color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
 }
 
 .btn-small {
+    background: #4b8bff;
     padding: 6px 10px;
-    font-size: 13px;
+    color: #fff;
+    border-radius: 6px;
+    font-size: 12px;
 }
 
 
-/* =============================== */
-/*             TABELAS            */
-/* =============================== */
+/* ===================================================== */
+/*                     CHECKBOX GROUP                    */
+/* ===================================================== */
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-table th {
-    background: #333;
-    padding: 12px;
-    text-align: left;
-    border-bottom: 2px solid #444;
-}
-
-table td {
+.checkbox-group {
+    background: #24272d;
     padding: 10px;
-    border-bottom: 1px solid #444;
+    border-radius: 8px;
+}
+
+.chkitem {
+    display: block;
+    margin-bottom: 8px;
 }
 
 
-/* =============================== */
-/*               BADGES           */
-/* =============================== */
+/* ===================================================== */
+/*                        BADGES                         */
+/* ===================================================== */
 
 .badge {
-    padding: 4px 10px;
-    border-radius: 12px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: #444b58;
     font-size: 12px;
     display: inline-block;
     color: #fff;
 }
 
 .badge-owner {
-    background: #2980b9;
+    background: #4b8bff;
 }
 
 .badge-office {
-    background: #444;
+    background: #6a6d75;
 }
 
 
-/* =============================== */
-/*              TAG CHIPS         */
-/* =============================== */
+/* ===================================================== */
+/*                        TAGS                           */
+/* ===================================================== */
 
 .tag-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #555;
     display: inline-block;
-    padding: 5px 10px;
-    border-radius: 20px;
-    margin-right: 5px;
-    font-size: 12px;
-    color: #000;
-    font-weight: bold;
+    margin: 2px;
+    font-size: 11px;
+    color: #fff;
 }
 
 .tag-preview {
@@ -199,38 +170,50 @@ table td {
 }
 
 
-/* =============================== */
-/*            CHECKBOXES          */
-/* =============================== */
+/* ===================================================== */
+/*                       TABELAS                         */
+/* ===================================================== */
 
-.checkbox-group {
-    margin-top: 10px;
+table.main-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #2a2d33;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
-.chkitem {
-    display: block;
-    padding: 6px 0;
+table.main-table th,
+table.main-table td {
+    padding: 10px;
+    border-bottom: 1px solid #3a3e47;
+}
+
+table.main-table th {
+    background: #202227;
+    font-size: 13px;
+}
+
+table.main-table tbody tr:hover {
+    background: #33363d;
 }
 
 
-/* =============================== */
-/*              FLASH             */
-/* =============================== */
+/* ===================================================== */
+/*                   MENSAGENS FLASH                     */
+/* ===================================================== */
 
 .flash {
-    padding: 12px;
-    border-radius: 6px;
-    margin-top: 10px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
 }
 
 .flash-success {
-    background: #2d662d;
+    background: #2f7;
+    color: #000;
 }
 
 .flash-error {
-    background: #7a1f1f;
-}
-
-.flash-warning {
-    background: #8a6d3b;
+    background: #d33;
+    color: #fff;
 }
