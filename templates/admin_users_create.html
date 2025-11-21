@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2>Criar Novo Usuário</h2>
+<h2>Novo Usuário</h2>
 
 <div class="card dark-card">
 
     <form method="POST" action="{{ url_for('admin_users_create') }}">
 
-        <!-- ============================= -->
-        <!-- DADOS PRINCIPAIS DO USUÁRIO   -->
-        <!-- ============================= -->
+        <!-- ========================= -->
+        <!-- DADOS PRINCIPAIS         -->
+        <!-- ========================= -->
 
-        <label>Username (login):</label>
+        <label>Nome de Usuário (login):</label>
         <input type="text" name="username" required>
 
         <label>Nome Completo:</label>
@@ -20,9 +20,10 @@
         <label>Senha Inicial:</label>
         <input type="password" name="password" required>
 
-        <!-- ============================= -->
-        <!-- FUNÇÃO                        -->
-        <!-- ============================= -->
+
+        <!-- ========================= -->
+        <!-- NÍVEL DE ACESSO          -->
+        <!-- ========================= -->
 
         <label>Função:</label>
         <select name="role" required>
@@ -32,11 +33,13 @@
             <option value="VISUALIZADOR">VISUALIZADOR</option>
         </select>
 
-        <!-- ============================= -->
-        <!-- ESCRITÓRIOS VINCULADOS        -->
-        <!-- ============================= -->
+
+        <!-- ========================= -->
+        <!-- ESCRITÓRIOS VINCULADOS   -->
+        <!-- ========================= -->
 
         <label>Escritórios Vinculados:</label>
+
         <div class="checkbox-group">
             {% for o in offices %}
                 <label class="chkitem">
@@ -46,11 +49,18 @@
             {% endfor %}
         </div>
 
-        <!-- ============================= -->
-        <!-- BOTÕES                        -->
-        <!-- ============================= -->
+        <!-- Marcar Todos -->
+        <label style="margin-top:10px;">
+            <input type="checkbox" id="check_all_offices" onclick="toggleCheckAll('check_all_offices', 'offices')">
+            Selecionar todos
+        </label>
 
-        <button class="btn-primary">Criar Usuário</button>
+
+        <!-- ========================= -->
+        <!-- BOTÕES                   -->
+        <!-- ========================= -->
+
+        <button class="btn-primary" style="margin-top:20px;">Criar Usuário</button>
         <a href="{{ url_for('admin_users') }}" class="btn-secondary">Cancelar</a>
 
     </form>
