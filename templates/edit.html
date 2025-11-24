@@ -1,111 +1,53 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h2>Editar Registro #{{ cliente.id }}</h2>
+<div class="card">
+  <form method="POST" action="{{ url_for('registros.update') }}">
+    <input type="hidden" name="id" value="{{ cliente.id }}">
+    <label>Nome:<input type="text" name="nome" value="{{ cliente.nome }}" required></label>
+    <label>CPF:<input type="text" name="cpf" value="{{ cliente.cpf }}"></label>
 
-<div class="card form-card dark-card">
+    <label>Escritório Dono:
+      <select name="escritorio_dono" required>
+        {% for o in offices %}
+          <option value="{{ o.display }}" {% if cliente.escritorio_dono == o.display %}selected{% endif %}>{{ o.display }}</option>
+        {% endfor %}
+      </select>
+    </label>
 
-    <form method="POST" action="{{ url_for('update') }}">
-        <input type="hidden" name="id" value="{{ cliente.id }}">
+    <label>Escritórios Vinculados:
+      <div class="checkbox-group">
+        {% for o in offices %}
+          <label class="chkitem">
+            <input type="checkbox" name="offices_linked" value="{{ o.display }}" {% if o.key in offices_linked %}checked{% endif %}>{{ o.display }}
+          </label>
+        {% endfor %}
+      </div>
+    </label>
 
-        <!-- ============================== -->
-        <!-- CAMPOS PRINCIPAIS             -->
-        <!-- ============================== -->
+    <label>Tipo de Ação:<input type="text" name="tipo_acao" value="{{ cliente.tipo_acao }}"></label>
+    <label>Data de Fechamento:<input type="date" name="data_fechamento" value="{{ cliente.data_fechamento }}"></label>
+    <label>Pendências:<textarea name="pendencias">{{ cliente.pendencias }}</textarea></label>
+    <label>Número do Processo:<input type="text" name="numero_processo" value="{{ cliente.numero_processo }}"></label>
+    <label>Data de Protocolo:<input type="date" name="data_protocolo" value="{{ cliente.data_protocolo }}"></label>
+    <label>Observações:<textarea name="observacoes">{{ cliente.observacoes }}</textarea></label>
+    <label>Captador:<input type="text" name="captador" value="{{ cliente.captador }}"></label>
 
-        <label>Nome:</label>
-        <input type="text" name="nome" value="{{ cliente.nome }}" required>
+    <label>Tags (separadas por vírgula):</label>
+    {% if current_user and current_user.role in ['ADMIN','SUPERVISOR'] %}
+      <input type="text" name="tags" value="{{ tags|join(', ') }}">
+    {% else %}
+      <input type="text" value="{{ tags|join(', ') }}" disabled>
+      <input type="hidden" name="tags" value="{{ tags|join(', ') }}">
+    {% endif %}
+    <div class="tag-preview">
+      {% for t in tags %}
+        <span class="tag-chip" style="background-color: {{ t|hashcolor }};">{{ t }}</span>
+      {% endfor %}
+    </div>
 
-        <label>CPF:</label>
-        <input type="text" name="cpf" value="{{ cliente.cpf }}">
-
-        <!-- ================================= -->
-        <!-- ESCRITÓRIO DONO                  -->
-        <!-- ================================= -->
-
-        <label>Escritório Dono:</label>
-        <select name="escritorio_dono" required>
-            {% for o in offices %}
-                <option value="{{ o.display }}"
-                    {% if cliente.escritorio_dono == o.display %}selected{% endif %}>
-                    {{ o.display }}
-                </option>
-            {% endfor %}
-        </select>
-
-        <!-- ================================= -->
-        <!-- ESCRITÓRIOS VINCULADOS (MULTI)    -->
-        <!-- ================================= -->
-
-        <label>Escritórios Vinculados:</label>
-        <div class="checkbox-group">
-            {% for o in offices %}
-                <label class="chkitem">
-                    <input type="checkbox" name="offices_linked"
-                           value="{{ o.display }}"
-                           {% if o.key in offices_linked %}checked{% endif %}>
-                    {{ o.display }}
-                </label>
-            {% endfor %}
-        </div>
-
-        <!-- ============================== -->
-        <!-- CAMPOS DO PROCESSO             -->
-        <!-- ============================== -->
-
-        <label>Tipo de Ação:</label>
-        <input type="text" name="tipo_acao" value="{{ cliente.tipo_acao }}">
-
-        <label>Data de Fechamento:</label>
-        <input type="date" name="data_fechamento" value="{{ cliente.data_fechamento }}">
-
-        <label>Pendências:</label>
-        <textarea name="pendencias">{{ cliente.pendencias }}</textarea>
-
-        <label>Número do Processo:</label>
-        <input type="text" name="numero_processo" value="{{ cliente.numero_processo }}">
-
-        <label>Data de Protocolo:</label>
-        <input type="date" name="data_protocolo" value="{{ cliente.data_protocolo }}">
-
-        <label>Observações:</label>
-        <textarea name="observacoes">{{ cliente.observacoes }}</textarea>
-
-        <label>Captador:</label>
-        <input type="text" name="captador" value="{{ cliente.captador }}">
-
-        <!-- ============================== -->
-        <!-- TAGS                           -->
-        <!-- ============================== -->
-
-        <label>Tags (separadas por vírgula):</label>
-
-        {% if current_user.role in ["ADMIN", "SUPERVISOR"] %}
-            <input type="text" name="tags"
-                   value="{{ tags|join(', ') }}"
-                   placeholder="ADMINISTRATIVO, JURÍDICO, ...">
-        {% else %}
-            <input type="text" value="{{ tags|join(', ') }}" disabled>
-            <input type="hidden" name="tags" value="{{ tags|join(', ') }}">
-        {% endif %}
-
-        <div class="tag-preview">
-            {% for t in tags %}
-                <span class="tag-chip"
-                      style="background-color: {{ '#%06x' % (hash(t) & 0xFFFFFF) }};">
-                    {{ t }}
-                </span>
-            {% endfor %}
-        </div>
-
-        <!-- ============================== -->
-        <!-- BOTÕES                         -->
-        <!-- ============================== -->
-
-        <button class="btn-primary">Salvar Alterações</button>
-        <a href="{{ url_for('table', office=cliente.escritorio_dono_chave) }}" class="btn-secondary">Cancelar</a>
-
-    </form>
-
+    <button class="btn-primary">Salvar Alterações</button>
+    <a class="btn-secondary" href="{{ url_for('registros.table', office=cliente.escritorio_dono_chave) }}">Cancelar</a>
+  </form>
 </div>
-
 {% endblock %}
