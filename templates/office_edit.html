@@ -1,30 +1,12 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h2>Editar Escritório</h2>
-
-<div class="card dark-card">
-
-    <form method="POST" action="">
-
-        <!-- CHAVE (fixa) -->
-        <label>Chave (não pode alterar):</label>
-        <input type="text" value="{{ office.office_key }}" disabled>
-
-        <!-- NOME DO ESCRITÓRIO -->
-        <label>Nome de Exibição:</label>
-        <input type="text" name="display_name"
-               value="{{ office.display_name }}"
-               required>
-
-        <button class="btn-primary">Salvar Alterações</button>
-
-        <a href="{{ url_for('offices_page') }}" class="btn-secondary">
-            Cancelar
-        </a>
-
-    </form>
-
+<div class="card">
+  <form method="POST" action="">
+    <label>Chave (não altera):<input type="text" value="{{ office.key }}" disabled></label>
+    <label>Nome de Exibição:<input type="text" name="display_name" value="{{ office.display }}" required></label>
+    <button class="btn-primary">Salvar</button>
+    <a class="btn-secondary" href="{{ url_for('offices.offices_page') }}">Cancelar</a>
+  </form>
 </div>
-
 {% endblock %}
