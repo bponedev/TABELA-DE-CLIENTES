@@ -1,33 +1,16 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 <h2>Login</h2>
-
-<div class="card dark-card" style="max-width: 420px; margin: auto;">
-
-    <form method="POST" action="{{ url_for('login') }}">
-
-        <!-- Usuário -->
-        <label>Usuário:</label>
-        <input type="text" name="username" required autocomplete="username">
-
-        <!-- Senha -->
-        <label>Senha:</label>
-        <div style="position: relative;">
-            <input type="password" name="password" id="password_input" required autocomplete="current-password">
-            <span id="toggle_pw"
-                  onclick="togglePassword('password_input','toggle_pw')"
-                  style="position:absolute; right:10px; top:12px; cursor:pointer;">
-                  👁️
-            </span>
-        </div>
-
-        <!-- Botão -->
-        <button class="btn-primary" style="margin-top: 20px; width: 100%;">Entrar</button>
-
-    </form>
-
+<div class="card dark-card" style="max-width:420px;margin:auto">
+  <form method="POST" action="{{ url_for('auth.login') }}">
+    <label>Usuário:<input type="text" name="username" required autocomplete="username"></label>
+    <label>Senha:
+      <div style="position:relative">
+        <input id="password_input" type="password" name="password" required>
+        <span id="toggle_pw" style="position:absolute;right:10px;top:10px;cursor:pointer" onclick="togglePassword('password_input','toggle_pw')">👁️</span>
+      </div>
+    </label>
+    <button class="btn-primary" style="width:100%">Entrar</button>
+  </form>
 </div>
-
 {% endblock %}
