@@ -1,49 +1,26 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h2>Editar Usuário</h2>
-
-<div class="card dark-card">
-
-    <form method="POST" action="{{ url_for('admin_users_edit', user_id=user.id) }}">
-
-        <!-- ============================= -->
-        <!-- CAMPOS PRINCIPAIS             -->
-        <!-- ============================= -->
-
-        <label>Username:</label>
-        <input type="text" value="{{ user.username }}" disabled>
-
-        <label>Nome Completo:</label>
-        <input type="text" name="full_name" value="{{ user.full_name }}" required>
-
-        <label>Função:</label>
-        <select name="role" required>
-            <option value="ADMIN" {% if user.role == "ADMIN" %}selected{% endif %}>ADMIN</option>
-            <option value="SUPERVISOR" {% if user.role == "SUPERVISOR" %}selected{% endif %}>SUPERVISOR</option>
-            <option value="OPERADOR" {% if user.role == "OPERADOR" %}selected{% endif %}>OPERADOR</option>
-            <option value="VISUALIZADOR" {% if user.role == "VISUALIZADOR" %}selected{% endif %}>VISUALIZADOR</option>
-        </select>
-
-        <!-- ============================= -->
-        <!-- STATUS (ATIVO/INATIVO)        -->
-        <!-- ============================= -->
-
-        <label>Status:</label>
-        <select name="active">
-            <option value="1" {% if user.active == 1 %}selected{% endif %}>Ativo</option>
-            <option value="0" {% if user.active == 0 %}selected{% endif %}>Inativo</option>
-        </select>
-
-        <!-- ============================= -->
-        <!-- BOTÕES                        -->
-        <!-- ============================= -->
-
-        <button class="btn-primary">Salvar Alterações</button>
-        <a href="{{ url_for('admin_users') }}" class="btn-secondary">Cancelar</a>
-
-    </form>
-
+<div class="card">
+  <form method="POST" action="{{ url_for('admin.edit_user', user_id=user.id) }}">
+    <label>Username<input type="text" value="{{ user.username }}" disabled></label>
+    <label>Nome completo<input name="full_name" value="{{ user.full_name }}" required></label>
+    <label>Função
+      <select name="role">
+        <option value="ADMIN" {% if user.role=='ADMIN' %}selected{% endif %}>ADMIN</option>
+        <option value="SUPERVISOR" {% if user.role=='SUPERVISOR' %}selected{% endif %}>SUPERVISOR</option>
+        <option value="OPERADOR" {% if user.role=='OPERADOR' %}selected{% endif %}>OPERADOR</option>
+        <option value="VISUALIZADOR" {% if user.role=='VISUALIZADOR' %}selected{% endif %}>VISUALIZADOR</option>
+      </select>
+    </label>
+    <label>Status
+      <select name="active">
+        <option value="1" {% if user.active==1 %}selected{% endif %}>Ativo</option>
+        <option value="0" {% if user.active==0 %}selected{% endif %}>Inativo</option>
+      </select>
+    </label>
+    <button class="btn-primary">Salvar</button>
+    <a class="btn-secondary" href="{{ url_for('admin.users') }}">Cancelar</a>
+  </form>
 </div>
-
 {% endblock %}
