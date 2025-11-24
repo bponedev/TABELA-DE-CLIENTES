@@ -1,76 +1,30 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h2>Registros Excluídos</h2>
-
-<div class="card dark-card">
-
-    <table class="main-table">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nome</th>
-                <th>CPF</th>
-                <th>Escritório Dono</th>
-                <th>Tipo Ação</th>
-                <th>Data Fechamento</th>
-                <th>Data Exclusão</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            {% for r in rows %}
-            <tr>
-
-                <td>{{ r.id }}</td>
-                <td>{{ r.nome }}</td>
-                <td>{{ r.cpf }}</td>
-
-                <td>
-                    <span class="badge badge-owner">
-                        {{ r.escritorio_dono }}
-                    </span>
-                </td>
-
-                <td>{{ r.tipo_acao }}</td>
-                <td>{{ r.data_fechamento }}</td>
-                <td>{{ r.data_exclusao[:10] }}</td>
-
-                <td>
-
-                    <!-- RESTAURAR -->
-                    <form method="POST"
-                          action="{{ url_for('restore') }}"
-                          class="inline">
-                        <input type="hidden" name="id" value="{{ r.id }}">
-                        <button class="btn-small">
-                            Restaurar
-                        </button>
-                    </form>
-
-                    <!-- EXCLUIR PERMANENTE - ADMIN SOMENTE -->
-                    {% if current_user.role == "ADMIN" %}
-                    <form method="POST"
-                          action="{{ url_for('delete_forever') }}"
-                          class="inline">
-                        <input type="hidden" name="id" value="{{ r.id }}">
-                        <button class="btn-small btn-danger"
-                                onclick="return confirm('Excluir permanentemente?')">
-                            Excluir
-                        </button>
-                    </form>
-                    {% endif %}
-
-                </td>
-
-            </tr>
-            {% endfor %}
-
-        </tbody>
-    </table>
-
+<div class="card">
+  <table class="table">
+    <thead><tr><th>ID</th><th>Nome</th><th>CPF</th><th>Escritório</th><th>Tipo</th><th>Exclusão</th><th>Ações</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.id }}</td><td>{{ r.nome }}</td><td>{{ r.cpf }}</td>
+        <td><span class="badge badge-owner">{{ r.escritorio_origem }}</span></td>
+        <td>{{ r.tipo_acao }}</td><td>{{ r.data_exclusao[:10] }}</td>
+        <td>
+          <form method="POST" action="{{ url_for('registros.restore') }}" style="display:inline">
+            <input type="hidden" name="id" value="{{ r.id }}">
+            <button class="btn-small">Restaurar</button>
+          </form>
+          {% if current_user.role == 'ADMIN' %}
+          <form method="POST" action="{{ url_for('registros.delete_forever') }}" style="display:inline">
+            <input type="hidden" name="id" value="{{ r.id }}">
+            <button class="btn-danger" onclick="return confirm('Excluir permanentemente?')">Excluir</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
-
 {% endblock %}
