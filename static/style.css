@@ -1,219 +1,35 @@
-/* ===================================================== */
-/*                 TEMA GERAL - DARK MODE               */
-/* ===================================================== */
-body {
-    background: #1d1f23;
-    color: #f2f2f2;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-}
-
-a {
-    color: #61a8ff;
-    text-decoration: none;
-}
-
-.container {
-    width: 95%;
-    margin: auto;
-    max-width: 1100px;
-}
-
-
-/* ===================================================== */
-/*                     TOPBAR                            */
-/* ===================================================== */
-
-.topbar {
-    background: #111317;
-    padding: 12px 0;
-    border-bottom: 1px solid #2a2d33;
-}
-
-.topbar a {
-    margin-right: 15px;
-}
-
-.topbar strong {
-    color: #ffffff;
-}
-
-
-/* ===================================================== */
-/*                       CARDS                           */
-/* ===================================================== */
-
-.card {
-    background: #2a2d33;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.35);
-}
-
-.form-card label {
-    margin-top: 12px;
-    display: block;
-    font-size: 14px;
-}
-
-.form-card input,
-.form-card select,
-.form-card textarea {
-    width: 100%;
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    margin-top: 5px;
-    background: #1f2126;
-    color: #fff;
-}
-
-textarea {
-    min-height: 75px;
-}
-
-
-/* ===================================================== */
-/*                       BOTÕES                          */
-/* ===================================================== */
-
-.btn-primary {
-    background: #4b8bff;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    color: #fff;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-.btn-secondary {
-    background: #383c44;
-    color: #ddd;
-    padding: 8px 14px;
-    border-radius: 6px;
-    display: inline-block;
-}
-
-.btn-danger {
-    background: #d44;
-    color: #fff;
-    padding: 8px 14px;
-    border-radius: 6px;
-}
-
-.btn-small {
-    background: #4b8bff;
-    padding: 6px 10px;
-    color: #fff;
-    border-radius: 6px;
-    font-size: 12px;
-}
-
-
-/* ===================================================== */
-/*                     CHECKBOX GROUP                    */
-/* ===================================================== */
-
-.checkbox-group {
-    background: #24272d;
-    padding: 10px;
-    border-radius: 8px;
-}
-
-.chkitem {
-    display: block;
-    margin-bottom: 8px;
-}
-
-
-/* ===================================================== */
-/*                        BADGES                         */
-/* ===================================================== */
-
-.badge {
-    padding: 4px 8px;
-    border-radius: 8px;
-    background: #444b58;
-    font-size: 12px;
-    display: inline-block;
-    color: #fff;
-}
-
-.badge-owner {
-    background: #4b8bff;
-}
-
-.badge-office {
-    background: #6a6d75;
-}
-
-
-/* ===================================================== */
-/*                        TAGS                           */
-/* ===================================================== */
-
-.tag-chip {
-    padding: 4px 10px;
-    border-radius: 999px;
-    background: #555;
-    display: inline-block;
-    margin: 2px;
-    font-size: 11px;
-    color: #fff;
-}
-
-.tag-preview {
-    margin-top: 10px;
-}
-
-
-/* ===================================================== */
-/*                       TABELAS                         */
-/* ===================================================== */
-
-table.main-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #2a2d33;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-table.main-table th,
-table.main-table td {
-    padding: 10px;
-    border-bottom: 1px solid #3a3e47;
-}
-
-table.main-table th {
-    background: #202227;
-    font-size: 13px;
-}
-
-table.main-table tbody tr:hover {
-    background: #33363d;
-}
-
-
-/* ===================================================== */
-/*                   MENSAGENS FLASH                     */
-/* ===================================================== */
-
-.flash {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-}
-
-.flash-success {
-    background: #2f7;
-    color: #000;
-}
-
-.flash-error {
-    background: #d33;
-    color: #fff;
-}
+/* reset & base */
+*{box-sizing:border-box;margin:0;padding:0;font-family:Segoe UI, Arial, sans-serif}
+body{background:#121214;color:#eaeaea;padding:20px 0}
+.container{width:94%;max-width:1100px;margin:0 auto}
+.topbar{background:#0f1113;padding:12px 0;border-bottom:1px solid #222;margin-bottom:18px}
+.topbar .container{display:flex;gap:12px;align-items:center}
+.topbar a{color:#cfe8ff;margin-right:10px;font-weight:600;text-decoration:none}
+.card{background:#1b1c1e;padding:18px;border-radius:10px;margin:12px 0}
+.dark-card{background:#151617}
+label{display:block;margin-top:10px;font-weight:700}
+input[type=text],input[type=password],input[type=date],select,textarea{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #333;background:#0f1113;color:#fff}
+textarea{min-height:90px}
+.btn-primary{background:#0b84ff;color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.btn-secondary{background:#444;color:#fff;padding:8px 12px;border:none;border-radius:8px}
+.btn-danger{background:#d9534f;color:#fff;padding:8px 12px;border:none;border-radius:8px}
+.btn-small{padding:6px 8px;border-radius:6px}
+.table{width:100%;border-collapse:collapse;margin-top:12px}
+.table th{background:#161618;padding:12px;text-align:left;border-bottom:1px solid #222;color:#bbb}
+.table td{padding:10px;border-bottom:1px solid #222}
+.badge{display:inline-block;padding:4px 8px;border-radius:12px;font-weight:700;color:#fff}
+.badge-owner{background:#2b7bb9}
+.badge-office{background:#333}
+.tag-chip{display:inline-block;padding:6px 10px;border-radius:999px;margin-right:6px;font-weight:700;color:#000}
+.tag-preview{margin-top:8px}
+.checkbox-group{margin:6px 0}
+.chkitem{display:block;margin:4px 0}
+.flash{padding:10px;border-radius:6px;margin:10px 0}
+.flash-success{background:#0b8a3e}
+.flash-error{background:#8a1f1f}
+.top-actions{margin-bottom:10px}
+.inline{display:inline-block}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.scrollable{max-height:60vh;overflow:auto}
+.pagination{margin-top:14px;display:flex;gap:10px;align-items:center}
+.mini-select{padding:6px 8px}
